@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { DE_NAME } from "../constant";
+import { DB_NAME } from "../constant";
 
 const connectDB = async () => {
   try {
     const connectionInstance = await mongoose.connect(
-      `${process.env.DATABASE_URL}/${DE_NAME}/?retryWrites=true&w=majority`
+      `${process.env.DATABASE_URL}/${DB_NAME}`
     );
     console.log("connected to DB", connectionInstance.connection.port);
   } catch (error) {
