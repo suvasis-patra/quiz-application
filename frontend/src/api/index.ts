@@ -45,9 +45,25 @@ export const createQuize = async (quiz: QuizFormData) => {
   }
 };
 
-export const getQuiz = async () => {
+export const getQuizzes = async (
+  category?: string,
+  level?: string,
+  tags?: string[]
+) => {
+  console.log(category, level, tags);
+  const queryParams = new URLSearchParams();
+  if (level) {
+    queryParams.append("level", level);
+  }
+  if (category) {
+    queryParams.append("category", category);
+  }
+  if (tags && tags.length > 0) {
+    tags.forEach((t) => queryParams.append("tag", t));
+  }
   try {
-    const response = await apiReaquest.get("/quiz/all-quizes");
+    console.log(queryParams);
+    const response = await apiReaquest.get(`/quiz/all-quizzes?${queryParams}`);
     console.log(response.data);
     return response?.data;
   } catch (error) {

@@ -5,12 +5,15 @@ import "./index.css";
 import App from "./App.tsx";
 import QueryProvider from "./providers/QueryProvider.tsx";
 import AuthContextProvider from "./providers/AuthContextProvider.tsx";
+import FilterContextProvider from "./providers/FilterContextProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryProvider>
       <AuthContextProvider>
-        <App />
+        <FilterContextProvider>
+          <App />
+        </FilterContextProvider>
       </AuthContextProvider>
     </QueryProvider>
   </StrictMode>

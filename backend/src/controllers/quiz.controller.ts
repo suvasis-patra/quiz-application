@@ -51,11 +51,12 @@ export async function getQuizById(req: Request, res: Response) {
 
 export async function getQuizByFiltration(req: Request, res: Response) {
   //   const { level, tag, category } = req.query;
+
   try {
     const level = req.query.level as string | undefined;
     const category = req.query.category as string | string[] | undefined;
     const tag = req.query.tag as string | string[] | undefined;
-
+    console.log(tag, level, category);
     let filters: Filters = {};
 
     if (level) {

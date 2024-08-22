@@ -9,7 +9,7 @@ import { authorizeUser } from "../middleware/user.middleware";
 const router = Router();
 
 // for logged in user
-router.route("/all-quizes").get(authorizeUser, getQuizByFiltration);
+router.route("/all-quizzes").get(authorizeUser, getQuizByFiltration);
 router.route("/get-quiz/:quizId").get(authorizeUser, getQuizById);
 
 // only for admin
