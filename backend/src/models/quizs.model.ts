@@ -7,7 +7,7 @@ export interface QuizSchema extends Document {
   tag: string[];
   level: string;
   numberOfQuestion: number;
-  category: string[];
+  category: string;
   questions: {
     question: string;
     answerOptions: string[];
@@ -35,7 +35,7 @@ const quizModel = new Schema<QuizSchema>(
       required: true,
     },
     category: {
-      type: [String],
+      type: String,
       required: true,
     },
     numberOfQuestion: {

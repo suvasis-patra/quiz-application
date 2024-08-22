@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Exo:ital,wght@0,100..900;1,100..900&family=Inter:wght@400;500;600;700;800&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Outfit:wght@100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: #faf0e6;
+    color: black;
+  }
+}
+
+@layer utilities {
+  .input_field {
+    @apply p-2 outline-none focus:outline-none border-[1px] border-black rounded-xl;
+  }
+  .input_label {
+    @apply py-2 text-lg font-semibold capitalize;
+  }
+  .input_message {
+    @apply text-red-500 py-1 text-base;
+  }
+  .shift {
+    @apply -translate-x-1 -translate-y-1;
+  }
+  .cta-btn {
+    @apply rounded-lg transition duration-100 font-semibold border border-black py-4  px-4  flex items-center gap-2 justify-center;
+  }
+}
+
+/*
+
+ #352F44
+ #5C5470
+ #B9B4C7
+ #FAF0E6 
+
+*/

@@ -3,6 +3,9 @@ import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { comparePassword, generateToken } from "../utils/index";
 import { LoginUserSchema, RegisterUserSchema } from "../utils/validation";
+import { ApiError } from "../utils/errorResponse";
+import { ApiResponse } from "../utils/apiResponse";
+import { ERROR_CODE } from "../constant";
 
 export async function registerUser(req: Request, res: Response) {
   try {
@@ -11,36 +14,49 @@ export async function registerUser(req: Request, res: Response) {
     // validate user information
     const validatedFields = RegisterUserSchema.safeParse(userData);
     if (!validatedFields.success) {
-      return res.status(401).send({ message: validatedFields.error });
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            validatedFields.error.message,
+            ERROR_CODE.INVALID_FORMAT
+          )
+        );
     }
-    const { username, email, password, name, confirmPassword } =
+    const { username, email, password, fullName, confirmPassword } =
       validatedFields.data;
-    // check password and confirm password are same
-    if (password !== confirmPassword) {
-      return res.status(400).send({ message: "password not matched!" });
-    }
     // check user already exist or not
     const exitstingUser = await User.findOne({ email });
     if (exitstingUser) {
-      return res.status(400).send({ message: "email already exists!" });
+      return res
+        .status(400)
+        .json(
+          new ApiError(400, "Email already exist!", ERROR_CODE.DUPLICATE_USER)
+        );
     }
 
     // create new user and save to db
     const user = new User({
       username,
-      name,
+      fullName,
       email,
       password,
     });
     await user.save();
     // return response on successful user creation
-    return res.status(201).send("success");
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(201, { userId: user._id }, "registered successfully!")
+      );
   } catch (error) {
     console.log("ERROR REGISTERING USER:", error);
-    if (error instanceof Error) {
-      return res.status(400).send({ message: "Invalid credentials" });
-    }
-    return res.status(500).send({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json(
+        new ApiError(500, "Internal server error!", ERROR_CODE.SERVER_ERROR)
+      );
   }
 }
 
@@ -50,18 +66,42 @@ export async function loginUser(req: Request, res: Response) {
     const validatedFields = LoginUserSchema.safeParse(req.body);
     // validate the data
     if (!validatedFields.success) {
-      throw new Error("Invalid credentials");
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            validatedFields.error.message,
+            ERROR_CODE.INVALID_FORMAT
+          )
+        );
     }
     // check the email exist or not
     const { email, password } = validatedFields.data;
     const findUser = await User.findOne({ email });
     if (!findUser) {
-      throw new Error("Invalid credentials");
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "Invalid credentials!",
+            ERROR_CODE.INVALID_CREDENTIALS
+          )
+        );
     }
     // check the password
     const isPasswordCorrect = comparePassword(password, findUser.password);
     if (!isPasswordCorrect) {
-      throw new Error("Invalid credentials");
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "Invalid credentials!",
+            ERROR_CODE.INVALID_CREDENTIALS
+          )
+        );
     }
     // generate access token
     const token = generateToken({ user_id: findUser._id });
@@ -73,12 +113,16 @@ export async function loginUser(req: Request, res: Response) {
     return res
       .status(200)
       .cookie("accessToken", token, options)
-      .send({ message: "successfully logged in!", token });
+      .json(
+        new ApiResponse(200, { token, userId: findUser._id }, "logged in!")
+      );
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(400).send({ message: "Failed to log in" });
-    }
-    return res.status(500).send({ message: "Internal server error" });
+    console.log("ERROR LOGGING IN USER:", error);
+    return res
+      .status(500)
+      .json(
+        new ApiError(500, "Internal server error!", ERROR_CODE.SERVER_ERROR)
+      );
   }
 }
 
@@ -89,15 +133,25 @@ export async function getCurrentUser(req: Request, res: Response) {
     // find the user based on id
     const user = await User.findById(userId).select("-password");
     if (!user) {
-      throw new Error("Failed to get user!");
+      return res
+        .status(401)
+        .json(
+          new ApiError(401, "User not found!", ERROR_CODE.UNAUTHORIZED_USER)
+        );
     }
     // return the user
-    return res.status(200).send({ message: "User found", user });
+    return res.status(200).json(new ApiResponse(200, user, "Found user!"));
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(400).send({ message: "Failed to log in" });
-    }
-    return res.status(500).send({ message: "Internal server error" });
+    console.log("ERROR GETTING USER:", error);
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Internal server error!",
+          ERROR_CODE.UNAUTHORIZED_USER
+        )
+      );
   }
 }
 
@@ -106,8 +160,8 @@ export function logoutUser(_: Request, res: Response) {
     httpOnly: true,
     secure: true,
   };
-  res
-    .status(200)
+  return res
+    .status(204)
     .clearCookie("accessToken", options)
-    .send({ message: "logged out!" });
+    .json(new ApiResponse(204, {}));
 }

@@ -6,7 +6,7 @@ interface UserRegistration extends Document {
   _id: ObjectId;
   username: string;
   email: string;
-  name: string;
+  fullName: string;
   password: string;
   role: "user" | "admin";
   quizesCreated: QuizSchema[];
@@ -24,7 +24,7 @@ const UserRegistrationSchema = new Schema<UserRegistration>({
     required: true,
     unique: true,
   },
-  name: {
+  fullName: {
     type: String,
     required: true,
   },

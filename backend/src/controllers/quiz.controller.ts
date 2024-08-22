@@ -1,6 +1,9 @@
 import { Quiz } from "../models/quizs.model";
 import { Request, Response } from "express";
 import { CreateQuizSchema } from "../utils/validation";
+import { ApiError } from "../utils/errorResponse";
+import { ERROR_CODE } from "../constant";
+import { ApiResponse } from "../utils/apiResponse";
 
 interface Filters {
   level?: string;
@@ -87,18 +90,36 @@ export async function createQuiz(req: Request, res: Response) {
   try {
     const validatedFields = CreateQuizSchema.safeParse(req.body);
     if (!validatedFields.success) {
-      return res.status(409).send({ message: "Failed to create new quiz!" });
+      return res
+        .status(409)
+        .json(new ApiError(409, "Invalid data!", ERROR_CODE.INVALID_FORMAT));
     }
     const quiz = await Quiz.create({
       ...validatedFields.data,
       tag: validatedFields.data.tag.split(","),
-      category: validatedFields.data.category.split(","),
+      numberOfQuestion: validatedFields.data.questions.length,
     });
     if (!quiz) {
-      return res.status(201).send({ message: "quiz created!", quiz });
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            400,
+            "Failed to create quiz!",
+            ERROR_CODE.DATABASE_INSTANCE
+          )
+        );
     }
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, { quizId: quiz._id }, "Quiz created!"));
   } catch (error) {
     console.log("ERROR CREATING QUIZ: ", error);
-    return res.status(500).send({ message: "Internal server error!" });
+    return res
+      .status(500)
+      .send(
+        new ApiError(500, "Internal server error!", ERROR_CODE.SERVER_ERROR)
+      );
   }
 }

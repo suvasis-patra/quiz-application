@@ -5,7 +5,6 @@ import {
   getQuizById,
 } from "../controllers/quiz.controller";
 import { authorizeUser } from "../middleware/user.middleware";
-import { checkRole } from "../middleware/checkrole.middleware";
 
 const router = Router();
 
@@ -14,6 +13,6 @@ router.route("/all-quizes").get(authorizeUser, getQuizByFiltration);
 router.route("/get-quiz/:quizId").get(authorizeUser, getQuizById);
 
 // only for admin
-router.route("/create-quiz").post(authorizeUser, checkRole, createQuiz);
+router.route("/create-quiz").post(authorizeUser, createQuiz);
 
 export default router;

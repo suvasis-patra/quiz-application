@@ -1,26 +1,28 @@
 import * as z from "zod";
 
-export const RegisterUserSchema = z.object({
-  username: z
-    .string({ required_error: "This field is required" })
-    .min(1, "This field is required"),
-  fullName: z
-    .string({ required_error: "This field is required" })
-    .min(1, "This field is required")
-    .max(32, "name is too long"),
-  password: z
-    .string({ required_error: "This field is required" })
-    .min(1, "This field is required")
-    .min(8, "password is too short"),
-  email: z
-    .string({ required_error: "This field is required" })
-    .min(1, "This field is required")
-    .email("Enter a vaild email"),
-  confirmPassword: z
-    .string({ required_error: "This field is required" })
-    .min(1, "This field is required")
-    .min(8, "password is too short"),
-});
+export const RegisterUserSchema = z
+  .object({
+    username: z
+      .string({ required_error: "This field is required" })
+      .min(1, "This field is required"),
+    fullName: z
+      .string({ required_error: "This field is required" })
+      .min(1, "This field is required")
+      .max(32, "name is too long"),
+    password: z
+      .string({ required_error: "This field is required" })
+      .min(1, "This field is required")
+      .min(8, "password is too short"),
+    email: z
+      .string({ required_error: "This field is required" })
+      .min(1, "This field is required")
+      .email("Enter a vaild email"),
+    confirmPassword: z.string({ required_error: "This field is required" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password must match",
+    path: ["confirmPassword"],
+  });
 
 export const LoginUserSchema = z.object({
   password: z
