@@ -2,7 +2,7 @@ import { Rocket } from "lucide-react";
 
 const Navbar = () => {
   return (
-    <nav className="w-full min-w-8 py-4 px-4 md:px-12 lg:px-20 flex items-center justify-between backdrop-blur-lg bg-white/30 shadow-lg border border-white/20">
+    <nav className="w-full min-w-8 py-4 px-4 md:px-12 lg:px-20 flex items-center justify-between backdrop-blur-lg bg-white/30 shadow-lg border border-white/20 sticky top-0 z-50">
       <div className="flex justify-center items-center gap-1">
         <span className="bg-blue text-background p-1 rounded-full text-center">
           <Rocket />
