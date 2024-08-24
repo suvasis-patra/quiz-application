@@ -24,6 +24,9 @@
   .shift {
     @apply -translate-x-1 -translate-y-1;
   }
+  .btn {
+    @apply flex items-center justify-center hover:shift hover:shadow-dark  rounded-lg transition duration-100 font-semibold text-xl border border-black py-2 px-4;
+  }
   .cta-btn {
     @apply rounded-lg transition duration-100 font-semibold border border-black py-4  px-4  flex items-center gap-2 justify-center;
   }
