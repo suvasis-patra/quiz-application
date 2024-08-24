@@ -70,3 +70,5 @@ export const CreateQuizSchema = z.object({
     )
     .min(1, { message: "There must be at least one question!" }),
 });
+
+export const PlayQuizSchema = z.array(z.string().min(1, "Answer is required"));

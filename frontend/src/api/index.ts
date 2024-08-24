@@ -50,7 +50,6 @@ export const getQuizzes = async (
   level?: string,
   tags?: string[]
 ) => {
-  console.log(category, level, tags);
   const queryParams = new URLSearchParams();
   if (level) {
     queryParams.append("level", level);
@@ -62,11 +61,39 @@ export const getQuizzes = async (
     tags.forEach((t) => queryParams.append("tag", t));
   }
   try {
-    console.log(queryParams);
     const response = await apiReaquest.get(`/quiz/all-quizzes?${queryParams}`);
     console.log(response.data);
     return response?.data;
   } catch (error) {
     console.log(error);
+    if (isAxiosError(error)) {
+      throw error;
+    }
+  }
+};
+
+export const getQuizById = async (quizId: string) => {
+  try {
+    const response = await apiReaquest.get(`quiz/get-quiz/${quizId}`);
+    console.log(response?.data);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const quizAnswers = async (answers: string[], quizId: string) => {
+  try {
+    const response = await apiReaquest.post(
+      `quiz/check-quiz/${quizId}`,
+      answers
+    );
+    console.log(response.data);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error;
+    }
   }
 };

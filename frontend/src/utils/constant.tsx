@@ -62,4 +62,5 @@ export enum QUERY_KEYS {
   CURRENT_USER = "currentUser",
   // QUIZ KEYS
   GET_QUIZZES = "getquizzes",
+  GET_QUIZ_BY_ID = "getquizbyid",
 }

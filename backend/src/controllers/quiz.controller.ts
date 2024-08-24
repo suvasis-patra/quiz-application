@@ -1,6 +1,6 @@
-import { Quiz } from "../models/quizs.model";
+import { Quiz, QuizSchema } from "../models/quizs.model";
 import { Request, Response } from "express";
-import { CreateQuizSchema } from "../utils/validation";
+import { CreateQuizSchema, PlayQuizSchema } from "../utils/validation";
 import { ApiError } from "../utils/errorResponse";
 import { ERROR_CODE } from "../constant";
 import { ApiResponse } from "../utils/apiResponse";
@@ -27,12 +27,14 @@ interface Filters {
 //   }
 // }
 
+function checkAnswer(answers: string[], quiz: QuizSchema) {}
+
 export async function getQuizById(req: Request, res: Response) {
   try {
     const { quizId } = req.params;
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
-      return res.status(404).send({ message: "Quiz not found!" });
+      return res.status(404).json(new ApiError(404, "Quiz not found!", 300));
     }
 
     const quizWithoutAnswer = quiz.toObject();
@@ -42,10 +44,26 @@ export async function getQuizById(req: Request, res: Response) {
         return questionsWithoutAnswer;
       }
     );
-    return res.status(200).send(questionsWithoutAnswer);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { questionsWithoutAnswer, title: quiz.title },
+          "Got quiz!"
+        )
+      );
   } catch (error) {
     console.log("ERROR GETTING QUIZ BY ID: ", error);
-    return res.status(500).send({ message: "Internal server error!" });
+    return res
+      .status(400)
+      .json(
+        new ApiError(
+          400,
+          "Failed to create quiz!",
+          ERROR_CODE.DATABASE_INSTANCE
+        )
+      );
   }
 }
 
@@ -117,6 +135,55 @@ export async function createQuiz(req: Request, res: Response) {
       .json(new ApiResponse(201, { quizId: quiz._id }, "Quiz created!"));
   } catch (error) {
     console.log("ERROR CREATING QUIZ: ", error);
+    return res
+      .status(500)
+      .send(
+        new ApiError(500, "Internal server error!", ERROR_CODE.SERVER_ERROR)
+      );
+  }
+}
+
+export async function checkQuiz(req: Request, res: Response) {
+  const { quizId } = req.params;
+  // console.log(req.body, req.params);
+  const validatedFields = PlayQuizSchema.safeParse(req.body);
+  if (!validatedFields.success) {
+    return res
+      .status(400)
+      .json(
+        new ApiError(
+          401,
+          validatedFields.error.message,
+          ERROR_CODE.INVALID_FORMAT
+        )
+      );
+  }
+  const answers = validatedFields.data;
+  try {
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json(new ApiError(404, "Quiz not found!", 300));
+    }
+    let score = 0;
+    let totalScore = 0;
+    const feedback = quiz.questions.map((question, index) => {
+      const isAnswerCorrect = question.correctAnswer === answers[index];
+      if (isAnswerCorrect) {
+        score += question.marks;
+      }
+      totalScore = +question.marks;
+      return {
+        isAnswerCorrect,
+        question: question.question,
+        correctAnswer: question.correctAnswer,
+        givenAnswer: answers[index],
+      };
+    });
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { feedback, totalScore, score }));
+  } catch (error) {
+    console.log("ERROR CHECKING QUIZ: ", error);
     return res
       .status(500)
       .send(
