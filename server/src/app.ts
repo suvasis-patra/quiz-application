@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import path from "path";
 import cookieParser from "cookie-parser";
 
 import userRouter from "./routes/user.router";
@@ -12,7 +13,7 @@ dotenv.config({ path: "./.env" });
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL!,
     credentials: true,
   })
 );
@@ -20,10 +21,13 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "client/dist")));
+
+app.get("*", (_, res) =>
+  res.sendFile(path.join(__dirname, "/client/dist/index.html"))
+);
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/quiz", quizRouter);
-
-app.all("*");
 
 export { app };
