@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 
+import { ERROR_CODE } from "../constant";
 import { User } from "../models/user.model";
-import { comparePassword, generateToken } from "../utils/index";
-import { LoginUserSchema, RegisterUserSchema } from "../utils/validation";
 import { ApiError } from "../utils/errorResponse";
 import { ApiResponse } from "../utils/apiResponse";
-import { ERROR_CODE } from "../constant";
+import { comparePassword, generateToken } from "../utils/index";
+import { LoginUserSchema, RegisterUserSchema } from "../utils/validation";
 
 export async function registerUser(req: Request, res: Response) {
   try {
@@ -114,7 +114,16 @@ export async function loginUser(req: Request, res: Response) {
       .status(200)
       .cookie("accessToken", token, options)
       .json(
-        new ApiResponse(200, { token, userId: findUser._id }, "logged in!")
+        new ApiResponse(
+          200,
+          {
+            token,
+            userId: findUser._id,
+            role: findUser.role,
+            username: findUser.username,
+          },
+          "logged in!"
+        )
       );
   } catch (error) {
     console.log("ERROR LOGGING IN USER:", error);
@@ -131,7 +140,16 @@ export async function getCurrentUser(req: Request, res: Response) {
     // get the user id from headers
     const userId = req.headers.userId;
     // find the user based on id
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId)
+      .select("-password") // Exclude the password field from the result
+      .populate({
+        path: "quizesCreated",
+        select: "-questions.correctAnswer", // Exclude correctAnswer from quizesCreated
+      })
+      .populate({
+        path: "quizesTaken.quiz",
+        select: "-questions.correctAnswer", // Exclude correctAnswer from quizesTaken
+      });
     if (!user) {
       return res
         .status(401)

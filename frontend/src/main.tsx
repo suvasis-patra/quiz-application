@@ -9,12 +9,12 @@ import FilterContextProvider from "./providers/FilterContextProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryProvider>
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <QueryProvider>
         <FilterContextProvider>
           <App />
         </FilterContextProvider>
-      </AuthContextProvider>
-    </QueryProvider>
+      </QueryProvider>
+    </AuthContextProvider>
   </StrictMode>
 );

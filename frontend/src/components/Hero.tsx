@@ -1,6 +1,8 @@
 import { ArrowRightFromLine } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     <section className="flex flex-col md:flex-row md:gap-6 py-4 px-4 md:px-12 lg:px-20 mt-8 md:mt-12">
       <div className="flex flex-col justify-center w-full md:w-1/2 space-y-4">
@@ -16,7 +18,10 @@ const Hero = () => {
           seasoned pro, there's something for everyone!
         </p>
         <div className="flex justify-center md:justify-start">
-          <button className="btn hover:bg-orange-500 flex items-center justify-center gap-3 text-purple hover:text-black">
+          <button
+            className="btn hover:bg-orange-500 flex items-center justify-center gap-3 text-purple hover:text-black"
+            onClick={() => navigate("/auth/register")}
+          >
             Start Your Journey
             <span>
               <ArrowRightFromLine />

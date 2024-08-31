@@ -7,12 +7,14 @@ import { CreateQuizSchema } from "../utils/validation";
 import { QUIZ_CATEGORIES } from "../utils/constant";
 import { useCreateQuize } from "../hooks/queries";
 import { useNavigate } from "react-router-dom";
+import ErrorMessage from "../components/ErrorMessage";
+import { RotatingLines } from "react-loader-spinner";
 
 export type QuizFormData = z.infer<typeof CreateQuizSchema>;
 
 const CreateQuiz = () => {
   const navigate = useNavigate();
-  const { isPending, mutateAsync: createQuiz } = useCreateQuize();
+  const { isPending, mutateAsync: createQuiz, isError } = useCreateQuize();
   const {
     register,
     handleSubmit,
@@ -48,7 +50,7 @@ const CreateQuiz = () => {
       const response = await createQuiz(data);
       if (response?.statusCode === 201) {
         reset();
-        navigate("/quizzes");
+        navigate("/dashboard/quizzes");
       }
     } catch (error) {
       console.log(error);
@@ -61,7 +63,6 @@ const CreateQuiz = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="md:min-w-[500px] lg:min-w-[700px] min-w-[300px] mx-auto"
       >
-        {/* Title Field */}
         <div className="flex flex-col gap-1 w-full">
           <label className="input_label" htmlFor="title">
             Title of the Quiz
@@ -79,7 +80,6 @@ const CreateQuiz = () => {
           )}
         </div>
 
-        {/* Description Field */}
         <div className="flex flex-col gap-1 w-full">
           <label className="input_label" htmlFor="description">
             Brief Description
@@ -97,7 +97,6 @@ const CreateQuiz = () => {
           )}
         </div>
 
-        {/* Level Field */}
         <div className="flex flex-col gap-1 w-full">
           <label className="input_label" htmlFor="level">
             Choose level
@@ -120,7 +119,6 @@ const CreateQuiz = () => {
           )}
         </div>
 
-        {/* Category Field */}
         <div className="flex flex-col gap-1 w-full">
           <label className="input_label" htmlFor="category">
             Select Category
@@ -147,7 +145,6 @@ const CreateQuiz = () => {
           )}
         </div>
 
-        {/* Tag Field */}
         <div className="flex flex-col gap-1 w-full">
           <label className="input_label" htmlFor="tag">
             Add tags
@@ -163,12 +160,10 @@ const CreateQuiz = () => {
           {errors.tag && <p className="input_message">{errors.tag.message}</p>}
         </div>
 
-        {/* Questions Field */}
         <div className="flex flex-col gap-1 w-full mt-4">
           <h3 className="font-semibold text-lg">Questions</h3>
           {questionFields.map((field, index) => (
             <div key={field.id} className="border p-4 my-2 rounded-lg">
-              {/* Question Field */}
               <div className="flex flex-col gap-1">
                 <label
                   className="input_label"
@@ -191,7 +186,6 @@ const CreateQuiz = () => {
                 )}
               </div>
 
-              {/* Answer Options Field */}
               <div className="flex flex-col gap-1 mt-2">
                 <label className="input_label">Answer Options</label>
                 {field.answerOptions.map((_, optionIndex) => (
@@ -212,7 +206,6 @@ const CreateQuiz = () => {
                 )}
               </div>
 
-              {/* Correct Answer Field */}
               <div className="flex flex-col gap-1 mt-2">
                 <label
                   className="input_label"
@@ -234,7 +227,6 @@ const CreateQuiz = () => {
                 )}
               </div>
 
-              {/* Marks Field */}
               <div className="flex flex-col gap-1 mt-2">
                 <label
                   className="input_label"
@@ -280,18 +272,31 @@ const CreateQuiz = () => {
             Add Question
           </button>
         </div>
-
-        {/* Submit Button */}
+        {isError && (
+          <ErrorMessage message="Failed to create quiz. Please try again!" />
+        )}
         <button
           type="submit"
           disabled={isPending}
           className="cta-btn hover:shift hover:shadow-dark w-full mt-8 text-xl flex justify-end items-center gap-2 md:gap-4 hover:bg-orange-600"
           style={{ cursor: isPending ? "not-allowed" : "pointer" }}
         >
-          <span>
-            <PackagePlus />
-          </span>
-          Create Quiz
+          {isPending ? (
+            <RotatingLines
+              visible={true}
+              width="20"
+              strokeWidth="3"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+            />
+          ) : (
+            <>
+              <span>
+                <PackagePlus />
+              </span>
+              Create Quiz
+            </>
+          )}
         </button>
       </form>
     </section>

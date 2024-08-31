@@ -7,12 +7,15 @@ import { QuizFormData } from "../pages/CreateQuiz";
 import { TUserLoginInfo } from "../pages/UserLogin";
 import {
   createQuize,
+  getCurrentUser,
+  getLatestQuizzes,
   getQuizById,
   getQuizzes,
   loginUser,
   quizAnswers,
   registerUser,
 } from "../api";
+import { useAuth } from "./userAuth";
 
 export const useRegisterUser = () => {
   return useMutation({
@@ -23,6 +26,14 @@ export const useRegisterUser = () => {
 export const useLoginUser = () => {
   return useMutation({
     mutationFn: (user: TUserLoginInfo) => loginUser(user),
+  });
+};
+
+export const useGetCurrentUser = () => {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: [QUERY_KEYS.CURRENT_USER, user?.userId],
+    queryFn: getCurrentUser,
   });
 };
 
@@ -51,5 +62,12 @@ export const useGetQuizById = (quizId: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_QUIZ_BY_ID, quizId],
     queryFn: () => getQuizById(quizId),
+  });
+};
+
+export const useGetLatestQuizzes = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_LATEST_QUIZZES],
+    queryFn: getLatestQuizzes,
   });
 };

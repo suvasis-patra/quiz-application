@@ -1,14 +1,14 @@
 import * as z from "zod";
-import { useNavigate, useParams } from "react-router-dom";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-
-import { useCheckQuiz, useGetQuizById } from "../hooks/queries";
-import SuccessMessage from "../components/SuccessMessage";
-import ErrorMessage from "../components/ErrorMessage";
-import { ArrowRightFromLine, BadgePlus, ClipboardCheck } from "lucide-react";
 import { RotatingLines } from "react-loader-spinner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowRightFromLine, BadgePlus, ClipboardCheck } from "lucide-react";
+
+import ErrorMessage from "../components/ErrorMessage";
+import SuccessMessage from "../components/SuccessMessage";
+import { useCheckQuiz, useGetQuizById } from "../hooks/queries";
 
 const PlayQuizSchema = z.object({
   answers: z.array(z.string().min(1, "Answer is required")),
@@ -30,7 +30,6 @@ type Feedback = {
 };
 
 const PlayQuiz = () => {
-  // show score on submitting response
   const navigate = useNavigate();
   const { quizId } = useParams();
   if (!quizId) return null;
@@ -198,10 +197,22 @@ const PlayQuiz = () => {
               className="cta-btn hover:shift hover:shadow-dark w-full mt-8 text-xl flex justify-end items-center gap-2 md:gap-4 hover:bg-orange-600"
               style={{ cursor: isPending ? "not-allowed" : "pointer" }}
             >
-              <span>
-                <BadgePlus />
-              </span>
-              Submit Quiz
+              {!isPending ? (
+                <>
+                  <span>
+                    <BadgePlus />
+                  </span>
+                  Submit Quiz
+                </>
+              ) : (
+                <RotatingLines
+                  visible={true}
+                  width="20"
+                  strokeWidth="3"
+                  animationDuration="0.75"
+                  ariaLabel="rotating-lines-loading"
+                />
+              )}
             </button>
           </form>
         </div>

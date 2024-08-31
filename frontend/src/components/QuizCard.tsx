@@ -20,37 +20,40 @@ const QuizCard = ({
 }: QuizCardProps) => {
   const navigate = useNavigate();
 
+  // Truncate description to 15 words
+  const truncatedDescription =
+    description.split(" ").slice(0, 15).join(" ") +
+    (description.split(" ").length > 15 ? "..." : "");
+
   return (
-    <article className="min-w-[250px] font-outfit bg-white border border-black hover:shadow-dark rounded-lg overflow-hidden  cursor-pointer">
+    <article className="min-w-[250px] font-outfit bg-white border-2 border-black hover:shadow-dark rounded-lg overflow-hidden cursor-pointer transition-all duration-200">
       <div className="p-4 relative">
-        <h3 className="text-xl font-bold mb-2">{title}</h3>
-        <p className="text-gray-700 mb-4">{description}</p>
+        <h3 className="text-xl font-bold mt-4 mb-2 line-clamp-2">{title}</h3>
+        <p className="text-gray-700 mb-4">{truncatedDescription}</p>
         <div className="flex items-center mb-2">
-          <p className="text-sm text-gray-600">Questions: </p>
+          <p className="text-sm text-gray-600">Questions:</p>
           <span className="ml-2 text-sm font-semibold">{numberOfQuestion}</span>
         </div>
         <div className="flex flex-wrap gap-2 mb-2">
           {tag?.map((item) => (
             <span
               key={item}
-              className="bg-purple text-black text-xs font-medium py-1 px-2 rounded-full border border-black"
+              className="bg-purple-200 text-black text-xs font-medium py-1 px-2 rounded-full border border-black"
             >
               {item}
             </span>
           ))}
         </div>
-        <span className="text-sm text-black absolute top-2 right-4 bg-green-500 p-1 rounded-md">
-          {level.toLocaleUpperCase()}
+        <span className="text-sm text-white absolute top-2 right-4 bg-green-500 px-2 py-1 rounded-md">
+          {level.toUpperCase()}
         </span>
       </div>
-      <div className="flex justify-center items-center w-full my-2">
+      <div className="flex justify-center items-center w-full mb-4">
         <button
-          className="hover:bg-orange-500 rounded-lg transition duration-100 font-semibold border border-black  flex items-center gap-2 justify-center w-1/2 py-2"
+          className="bg-orange-500 text-white rounded-lg transition hover:shift hover:shadow-dark duration-100 font-semibold border border-black flex items-center gap-2 justify-center w-3/4 py-2"
           onClick={() => navigate(`/quizzes/${quizId}`)}
         >
-          <span>
-            <GraduationCap />
-          </span>
+          <GraduationCap />
           Play
         </button>
       </div>

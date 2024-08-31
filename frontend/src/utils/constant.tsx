@@ -3,33 +3,38 @@ import {
   ChartColumnBig,
   FlagTriangleRight,
   MessageSquareText,
+  Home,
+  User,
+  Settings,
+  Award,
+  Telescope,
 } from "lucide-react";
 
 export const SIDEBARITEMS = [
   {
     text: "Home",
-    // icon: <Home />,
-    linkTo: "",
+    icon: <Home />,
+    linkTo: "/dashboard",
   },
   {
-    text: "Results",
-    // icon:,
-    linkTo: "",
+    text: "Play",
+    icon: <Telescope />,
+    linkTo: "/dashboard/quizzes",
   },
   {
     text: "Achivements",
-    // icon:,
-    linkTo: "",
+    icon: <Award />,
+    linkTo: "/dashboard",
   },
   {
     text: "Profile",
-    // icon:,
-    linkTo: "",
+    icon: <User />,
+    linkTo: "/dashboard/profile",
   },
   {
     text: "Settings",
-    // icon:,
-    linkTo: "",
+    icon: <Settings />,
+    linkTo: "/dashboard",
   },
 ] as const;
 
@@ -37,6 +42,7 @@ export const QUIZ_CATEGORIES = [
   "All",
   "General Knowledge",
   "Science & Technology",
+  "Mathematics",
   "History",
   "Geography",
   "Literature",
@@ -70,6 +76,7 @@ export enum QUERY_KEYS {
   // QUIZ KEYS
   GET_QUIZZES = "getquizzes",
   GET_QUIZ_BY_ID = "getquizbyid",
+  GET_LATEST_QUIZZES = "getlatestquizzes",
 }
 
 export const FEATURES = [

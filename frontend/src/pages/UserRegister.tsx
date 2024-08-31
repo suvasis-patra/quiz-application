@@ -9,6 +9,7 @@ import { errorMessage } from "../utils";
 import axios from "axios";
 import ErrorMessage from "../components/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage";
+import { RotatingLines } from "react-loader-spinner";
 
 export type TUser = z.infer<typeof RegisterUserSchema>;
 
@@ -58,7 +59,7 @@ const UserRegister = () => {
     <div className="w-full">
       <div className="text-center">
         <h1 className="font-exo font-bold text-3xl mb-3">
-          Welcome to <span className="text-white">QuizBook</span>!
+          Welcome to QuizMaster!
         </h1>
         <p
           className="text-lg
@@ -155,7 +156,17 @@ const UserRegister = () => {
             className="w-full p-2 flex items-center justify-center bg-black text-white mt-3 md:mt-5 rounded-lg"
             disabled={isPending}
           >
-            Click to register
+            {isPending ? (
+              <RotatingLines
+                visible={true}
+                width="20"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+              />
+            ) : (
+              "click to register"
+            )}
           </button>
         </div>
         <p className="text-base mt-2 text-center font-outfit">

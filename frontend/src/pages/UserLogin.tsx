@@ -1,16 +1,17 @@
 import * as z from "zod";
+import axios from "axios";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { errorMessage } from "../utils";
 import { useAuth } from "../hooks/userAuth";
 import { useLoginUser } from "../hooks/queries";
 import { LoginUserSchema } from "../utils/validation";
-import { useState } from "react";
-import axios from "axios";
-import { errorMessage } from "../utils";
 import ErrorMessage from "../components/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage";
+import { RotatingLines } from "react-loader-spinner";
 
 export type TUserLoginInfo = z.infer<typeof LoginUserSchema>;
 
@@ -18,7 +19,7 @@ const UserLogin = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { login } = useAuth();
   const { isPending, mutateAsync: loginUser } = useLoginUser();
   const {
     register,
@@ -40,7 +41,7 @@ const UserLogin = () => {
       if (response.statusCode === 200) {
         setSuccessMsg("logged in!");
         reset();
-        setUser({
+        login({
           userId: response?.data?.userId,
           role: response?.data?.role,
           username: response?.data?.username,
@@ -108,7 +109,17 @@ const UserLogin = () => {
             className="w-full p-2 flex items-center justify-center bg-black text-white mt-3 md:mt-5 rounded-lg"
             disabled={isPending}
           >
-            Click to Login
+            {isPending ? (
+              <RotatingLines
+                visible={true}
+                width="20"
+                strokeWidth="3"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+              />
+            ) : (
+              "click to login"
+            )}
           </button>
         </div>
         <p className="text-base mt-2 text-center font-outfit">

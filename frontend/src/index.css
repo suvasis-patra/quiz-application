@@ -32,6 +32,38 @@
   }
 }
 
+.categories-scrollbar {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.categories-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.categories-scrollbar {
+  scrollbar-width: none;
+}
+
+.categories-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.categories-scrollbar::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 8px;
+  border: 2px solid #faf0e6;
+}
+
+.categories-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: black;
+}
+
+.categories-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #5c5470 #23a094;
+}
 /*
 
  #352F44

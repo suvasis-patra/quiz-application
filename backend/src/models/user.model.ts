@@ -9,8 +9,8 @@ interface UserRegistration extends Document {
   fullName: string;
   password: string;
   role: "user" | "admin";
-  quizesCreated: QuizSchema[];
-  quizesTaken: { quiz: QuizSchema; score: number }[];
+  quizesCreated: ObjectId[];
+  quizesTaken: { quiz: ObjectId; score: number }[];
 }
 
 const UserRegistrationSchema = new Schema<UserRegistration>({

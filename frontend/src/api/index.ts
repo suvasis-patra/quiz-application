@@ -30,6 +30,19 @@ export const loginUser = async (user: TUserLoginInfo) => {
   }
 };
 
+export const getCurrentUser = async () => {
+  try {
+    const response = await apiReaquest.get("user/current-user");
+    console.log(response?.data);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error;
+    }
+  }
+};
+
 export const logoutUser = async () => {};
 
 export const createQuize = async (quiz: QuizFormData) => {
@@ -69,6 +82,16 @@ export const getQuizzes = async (
     if (isAxiosError(error)) {
       throw error;
     }
+  }
+};
+
+export const getLatestQuizzes = async () => {
+  try {
+    const response = await apiReaquest.get(`quiz/get-latest-quizzes`);
+    console.log(response?.data);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
   }
 };
 
